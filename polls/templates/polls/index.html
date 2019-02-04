@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}">
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title></title></head>
+<body>
+<h1>アイスホッケー掲示板</h1>
+<div class="entries-area">
+    <h2>書き込み</h2>
+        {% for post in posts %}
+            <h3>{{ post.name}}:{{ post.created_at|date:"Y/n/j H:i:s" }}</h3>
+            {{ post.message|linebreaks }}
+            <form action="{% url 'good' post.id %}" method="post">
+            {% csrf_token %}
+            <input type="submit" name="good" value="いいね">({{ post.good_set.count }}いいね)
+            </form>
+        {% endfor %}
+</div>
+<form action="{% url 'index' %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="送信">
+</form>
+{% if posts.has_previous %}}
+<a href="?page={{ posts.previous_page_number }}">&lt;　前のページ</a>
+{% else %}
+<span>&lt;　前のページ</span>
+{% endif %}
+
+{{ posts.number }}ページ
+
+{% if posts.has_next %}
+<a href="?page={{ posts.next_page_number}}">次のページ &gt;</a>
+{% else %}
+<span>次のページ &gt</span>
+{% endif %}
+</body>
+</html>
